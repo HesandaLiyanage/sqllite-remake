@@ -5,8 +5,8 @@
 
 typedef struct {
   char* buffer;
-  size_t buffer_length;
-  ssize_t input_length;
+  size_t buffer_length; //how much memory is allocated
+  ssize_t input_length; //actual length of the input received
 } InputBuffer;
 
 InputBuffer* new_input_buffer() {
@@ -17,7 +17,7 @@ InputBuffer* new_input_buffer() {
   return input_buffer;
 }
 
-void print_prompt() { printf("db > "); }
+void print_prompt() { printf("Hessdb > "); }
 
 void read_input(InputBuffer* input_buffer) {
   ssize_t bytes_read =
@@ -26,7 +26,7 @@ void read_input(InputBuffer* input_buffer) {
     printf("Error reading input\n");
     exit(EXIT_FAILURE);
   }
-  // Ignore trailing newline
+
   input_buffer->input_length = bytes_read - 1;
   input_buffer->buffer[bytes_read - 1] = 0;
 }
@@ -50,3 +50,5 @@ int main(int argc, char* argv[]) {
     }
   }
 }
+
+

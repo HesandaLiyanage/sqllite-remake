@@ -30,6 +30,10 @@ typedef struct {
    StatementType type;
 }  Statement;
 
+void close_input_buffer(InputBuffer* input_buffer) {
+    free(input_buffer->buffer);
+    free(input_buffer);
+}
 
 MetaCommandResult do_meta_command(InputBuffer* input_buffer) {
   if (strcmp(input_buffer->buffer, ".exit") == 0) {
@@ -79,10 +83,6 @@ void read_input(InputBuffer* input_buffer) {
   input_buffer->buffer[bytes_read - 1] = 0;
 }
 
-void close_input_buffer(InputBuffer* input_buffer) {
-    free(input_buffer->buffer);
-    free(input_buffer);
-}
 
 int main(int argc, char* argv[]) {
   InputBuffer* input_buffer = new_input_buffer();

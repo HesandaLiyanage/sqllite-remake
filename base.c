@@ -5,9 +5,28 @@
 #include <stdint.h>
 
 //db settings
-#define COLUMN_USERNAME_SIZE 32;
-#define COLUMN_EMAIL_SIZE 255;
+#define COLUMN_USERNAME_SIZE 32
+#define COLUMN_EMAIL_SIZE 255
+#define size_of_attribute(Struct, Attribute) sizeof(((Struct*)0)->Attribute)
 
+
+
+//all the enum wordings
+typedef enum {
+  META_COMMAND_SUCCESS,
+  META_COMMAND_UNRECOGNIZED_COMMAND
+} MetaCommandResult;
+
+typedef enum { 
+  PREPARE_SUCCESS, 
+  PREPARE_UNRECOGNIZED_STATEMENT,
+  PREPARE_SYNTAX_ERROR
+} PrepareResult;
+
+typedef enum { 
+  STATEMENT_INSERT, 
+  STATEMENT_SELECT 
+} StatementType;
 
 //Structs 
 typedef struct {
@@ -15,7 +34,6 @@ typedef struct {
   char username[COLUMN_USERNAME_SIZE];
   char email[COLUMN_EMAIL_SIZE];
 } Row;
-
 
 typedef struct {
   char* buffer;
@@ -33,22 +51,8 @@ InputBuffer* new_input_buffer() {
 
 typedef struct {
    StatementType type;
-   row row_to_insert;
+   Row row_to_insert;
 }  Statement;
-
-//all the enum wordings
-typedef enum {
-  META_COMMAND_SUCCESS,
-  META_COMMAND_UNRECOGNIZED_COMMAND
-} MetaCommandResult;
-
-typedef enum { 
-  PREPARE_SUCCESS, PREPARE_UNRECOGNIZED_STATEMENT 
-} PrepareResult;
-
-typedef enum { 
-  STATEMENT_INSERT, STATEMENT_SELECT 
-} StatementType;
 
 void close_input_buffer(InputBuffer* input_buffer) {
     free(input_buffer->buffer);
@@ -66,10 +70,10 @@ MetaCommandResult do_meta_command(InputBuffer* input_buffer) {
 
 PrepareResult prepare_statement(InputBuffer* input_buffer,
                                 Statement* statement) {
-  if (strncmp(input_buffer->buffer, "insert", 6) == 0) {
+  if (strncmp(input_buffer->buffer, "INSERT", 6) == 0) {
     statement->type = STATEMENT_INSERT;
     int args_assigned = sscanf(
-      input_buffer->buffer, "INSERT %d %s %s", &(statement->row_to_insert_id),
+      input_buffer->buffer, "INSERT %d %s %s", &(statement->row_to_insert.id),
       statement->row_to_insert.username,statement->row_to_insert.email);
       if(args_assigned < 3) { 
         return PREPARE_SYNTAX_ERROR;
@@ -138,7 +142,7 @@ int main(int argc, char* argv[]) {
           continue;
     }
 
-    //execution. for now just placeholders
+    
 
 
     execute_statement(&statement);

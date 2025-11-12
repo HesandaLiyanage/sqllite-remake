@@ -39,3 +39,39 @@ MetaCommandResult do_meta_command(InputBuffer* input_buffer) {
 What's happening? This handles commands that start with . (these are NOT SQL, they're special database commands)
 Why separate this? Because .exit, .tables, .help aren't SQL - they're control commands for your database tool itself.
 -----------------------------------------------------
+PrepareResult prepare_statement(InputBuffer* input_buffer,
+                                Statement* statement) {
+  if (strncmp(input_buffer->buffer, "insert", 6) == 0) {
+    statement->type = STATEMENT_INSERT;
+    return PREPARE_SUCCESS;
+  }
+  if (strcmp(input_buffer->buffer, "select") == 0) {
+    statement->type = STATEMENT_SELECT;
+    return PREPARE_SUCCESS;
+  }
+  return PREPARE_UNRECOGNIZED_STATEMENT;
+}
+
+What's happening? This is your "SQL Compiler" - it reads the text and figures out what the user wants.
+Note the difference:
+
+strncmp(..., "insert", 6) - checks only first 6 characters because insert will have data after it: insert 1 john john@email.com
+strcmp(..., "select") - checks the whole thing because select (for now) is just one word
+
+It fills in the statement object with the type, then returns success or failure.
+----------------------------------------------------
+void execute_statement(Statement* statement) {
+  switch (statement->type) {
+    case (STATEMENT_INSERT):
+      printf("This is where we would do an insert.\n");
+      break;
+    case (STATEMENT_SELECT):
+      printf("This is where we would do a select.\n");
+      break;
+  }
+}
+
+What's happening? This is your "Virtual Machine" - it actually DOES what the statement says (or will, once you write that code).
+Right now it's just stubs (placeholders) because you haven't built the actual database yet. In Part 3, you'll replace these printf statements with real insert/select logic.
+
+----------------------------------------------------

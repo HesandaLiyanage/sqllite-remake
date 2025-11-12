@@ -50,7 +50,7 @@ PrepareResult prepare_statement(InputBuffer* input_buffer,
     statement->type = STATEMENT_INSERT;
     return PREPARE_SUCCESS;
   }
-  if (strcmp(input_buffer->buffer, "select") == 0) {
+  if (strcmp(input_buffer->buffer, "SELECT") == 0) {
     statement->type = STATEMENT_SELECT;
     return PREPARE_SUCCESS;
   }

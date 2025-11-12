@@ -3,6 +3,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+//db settings
+#define COLUMN_USERNAME_SIZE 32;
+#define COLUMN_EMAIL_SIZE 255;
+
+
+//Structs 
+typedef struct {
+  uint32_t id;
+  char username[COLUMN_USERNAME_SIZE];
+  char email[COLUMN_EMAIL_SIZE];
+} Row;
+
+
 typedef struct {
   char* buffer;
   size_t buffer_length; //how much memory is allocated
@@ -17,14 +30,20 @@ InputBuffer* new_input_buffer() {
   return input_buffer;
 }
 
+
+//all the enum wordings
 typedef enum {
   META_COMMAND_SUCCESS,
   META_COMMAND_UNRECOGNIZED_COMMAND
 } MetaCommandResult;
 
-typedef enum { PREPARE_SUCCESS, PREPARE_UNRECOGNIZED_STATEMENT } PrepareResult;
+typedef enum { 
+  PREPARE_SUCCESS, PREPARE_UNRECOGNIZED_STATEMENT 
+} PrepareResult;
 
-typedef enum { STATEMENT_INSERT, STATEMENT_SELECT } StatementType;
+typedef enum { 
+  STATEMENT_INSERT, STATEMENT_SELECT 
+} StatementType;
 
 typedef struct {
    StatementType type;
@@ -48,16 +67,16 @@ PrepareResult prepare_statement(InputBuffer* input_buffer,
                                 Statement* statement) {
   if (strncmp(input_buffer->buffer, "insert", 6) == 0) {
     statement->type = STATEMENT_INSERT;
-    return PREPARE_SUCCESS;
-  }
-  if (strcmp(input_buffer->buffer, "SELECT") == 0) {
-    statement->type = STATEMENT_SELECT;
     int args_assigned = sscanf(
       input_buffer->buffer, "INSERT %d %s %s", &(statement->row_to_insert_id),
       statement->row_to_insert.username,statement->row_to_insert.email);
       if(args_assigned < 3) { 
         return PREPARE_SYNTAX_ERROR;
       }
+    return PREPARE_SUCCESS;
+  }
+  if (strcmp(input_buffer->buffer, "SELECT") == 0) {
+    statement->type = STATEMENT_SELECT;
     return PREPARE_SUCCESS;
   }
 
@@ -120,7 +139,7 @@ int main(int argc, char* argv[]) {
 
     //execution. for now just placeholders
 
-    
+
     execute_statement(&statement);
     printf("Executed.\n");
   }

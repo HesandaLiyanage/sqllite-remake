@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 //db settings
 #define COLUMN_USERNAME_SIZE 32;
@@ -30,6 +31,10 @@ InputBuffer* new_input_buffer() {
   return input_buffer;
 }
 
+typedef struct {
+   StatementType type;
+   row row_to_insert;
+}  Statement;
 
 //all the enum wordings
 typedef enum {
@@ -44,10 +49,6 @@ typedef enum {
 typedef enum { 
   STATEMENT_INSERT, STATEMENT_SELECT 
 } StatementType;
-
-typedef struct {
-   StatementType type;
-}  Statement;
 
 void close_input_buffer(InputBuffer* input_buffer) {
     free(input_buffer->buffer);

@@ -52,6 +52,12 @@ PrepareResult prepare_statement(InputBuffer* input_buffer,
   }
   if (strcmp(input_buffer->buffer, "SELECT") == 0) {
     statement->type = STATEMENT_SELECT;
+    int args_assigned = sscanf(
+      input_buffer->buffer, "INSERT %d %s %s", &(statement->row_to_insert_id),
+      statement->row_to_insert.username,statement->row_to_insert.email);
+      if(args_assigned < 3) { 
+        return PREPARE_SYNTAX_ERROR;
+      }
     return PREPARE_SUCCESS;
   }
 
@@ -113,6 +119,8 @@ int main(int argc, char* argv[]) {
     }
 
     //execution. for now just placeholders
+
+    
     execute_statement(&statement);
     printf("Executed.\n");
   }
